@@ -155,12 +155,11 @@ T2 = Frame(tab)
 T3 = Frame(tab)
 # tab.pack(fill=BOTH, expand=1)
 
-icon_t1 = PhotoImage(file="E:/computer/python/LungEn Beginner/EP4/t1_expense.png")
-icon_t2 = PhotoImage(file="E:/computer/python/LungEn Beginner/EP4/t2_expenselist.png")
-icon_t3 = PhotoImage(file="E:/computer/python/LungEn Beginner/EP4/t3_tv.png")
-icon_b1 = PhotoImage(file="E:/computer/python/LungEn Beginner/EP4/t1_save.png")
+icon_t1 = PhotoImage(file="t1_expense.png")
+icon_t2 = PhotoImage(file="t2_expenselist.png")
+icon_t3 = PhotoImage(file="t3_tv.png")
+icon_b1 = PhotoImage(file="t1_save.png")
 
-i = PhotoImage(file="EP6/money.png")
 
 
 tab.add(T1, text=f"{'Add Expense': ^30}", image=icon_t1, compound='top') # T1 T2 is Frame
@@ -182,7 +181,7 @@ f3.pack(fill=BOTH)
 Psedu_lb = ttk.Label(f1)
 Psedu_lb.pack()
 
-main_icon = PhotoImage(file="E:/computer/python/LungEn Beginner/EP4/icon_coin.png")
+main_icon = PhotoImage(file="icon_coin.png")
 l_img1 = ttk.Label(f1, image=main_icon)
 l_img1.pack(pady=10)
 
