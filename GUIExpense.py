@@ -186,6 +186,10 @@ def UpdateCSV():
 
 
 def DeleteRecord(event=None):
+    select = ex_tv.selection()
+    if select == (): # Dont choose
+        return
+
     check = messagebox.askyesno("Confirm?","Do you want to delete this expense")
     # print(check)
     if(check == False): # if press No don't remove this expense
@@ -193,7 +197,7 @@ def DeleteRecord(event=None):
 
     # print(alltransaction)
     # print("Delete")
-    select = ex_tv.selection()
+    
     # print(select)
     data = ex_tv.item(select)
     data = data['values']
