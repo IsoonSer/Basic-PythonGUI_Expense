@@ -99,21 +99,31 @@ def read_data_to_label():
         text = ''
         # dt = datetime.now().strftime("%m-%d-%Y")
         init_date = -6 # Select 6 expense
-        initial_day = csv_reader[init_date][0]
-        text += f"วันที่{csv_reader[init_date][0]}\n"
-        for row in csv_reader[init_date::1]:
+        try:    
+            initial_day = csv_reader[init_date][0]
+            text += f"วันที่{csv_reader[init_date][0]}\n"
+            for row in csv_reader[init_date::1]:
             
-            # if(dt == row[0]):
-            # print(initial_day, row[0])
-            if(initial_day != row[0]):
-                # print("Tranfrom############")
-                text += f"\nวันที่ {row[0]} \n"
-                initial_day = row[0]
+                if(csv_reader[init_date][0] != row[0]):
+                    text += f"\nวันที่ {row[0]} \n"
+                    init_date = row[0]
             ##text = '' 
             #print(f"เวลา {row[0]} รายการ {row[1]} ราคาต่อชิ้น {row[2]} จำนวน {row[3]} ราคารวม {row[4]}")
-            text += f"เวลา: {row[1]} รายการ: {row[2]} ราคาต่อชิ้น: {row[3]} บาท \nจำนวน: {row[4]} ชิ้น ราคารวม: {row[5]} บาท\n"
-
+                text += f"เวลา: {row[1]} รายการ: {row[2]} ราคาต่อชิ้น: {row[3]} บาท \nจำนวน: {row[4]} ชิ้น ราคารวม: {row[5]} บาท\n"
+        except :
+            
+            for row in csv_reader: # Take it All
+                init_date = 0
+                text += f"วันที่{csv_reader[init_date][0]}\n"
+                if(csv_reader[init_date][0] != row[0]):
+                    text += f"\nวันที่ {row[0]} \n"
+                    init_date = row[0]
+            ##text = '' 
+            #print(f"เวลา {row[0]} รายการ {row[1]} ราคาต่อชิ้น {row[2]} จำนวน {row[3]} ราคารวม {row[4]}")
+                text += f"เวลา: {row[1]} รายการ: {row[2]} ราคาต่อชิ้น: {row[3]} บาท \nจำนวน: {row[4]} ชิ้น ราคารวม: {row[5]} บาท\n"
         # print(text)
+        if text == '':
+            text += "ยังไม่มีรายการในขณะนี้"
         return text
 
 def read_csv():
@@ -132,14 +142,7 @@ def update_table(): # in treeview
     # print(data)
     for e in data:
         # ex_tv.insert('', 'end', values=e)
-        ex_tv.insert('', 0, values=e)
-
-
-    
-
-
-
-
+        ex_tv.insert('', 0, values=e) # Insert to index 0 or Top
 
 
 
@@ -231,10 +234,10 @@ ex_tv.pack()
 for hd, hd_t in zip(header, header_text):
 	ex_tv.heading(hd,text=hd_t)
 
-headerwidth = [(70,80),(70,80),(90,100),(70,80),(70,80),(70,80)] # width of header
+headerwidth = [80,80,90,80,80,80] # width of header
 
 for hd,W in zip(header,headerwidth):
-	ex_tv.column(hd,minwidth=W[0],width=W[1])
+	ex_tv.column(hd,width=W)
 
 update_table()
 
@@ -242,9 +245,6 @@ update_table()
 #     ex_tv.insert('', END, values=e)
 
 # ----------------------------------------------------------
-
-
-
 v_result = StringVar()
 v_result.set("\n\n----------Developed By Isoon----------")
 result = ttk.Label(f1, textvariable=v_result, font=(None,16), foreground="green") # Normal Label fg = "green"
