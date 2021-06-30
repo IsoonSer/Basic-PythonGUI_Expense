@@ -10,7 +10,19 @@ root = Tk()
 root.title("Expense By @IS")
 # root.geometry("600x800+3100+0") # 450
 # root.geometry("600x800+500+0") # 450
-root.geometry("900x800+500+0") # 450
+# root.geometry("900x800+500+0") # 
+
+w = 900
+h = 800
+
+ws = root.winfo_screenwidth() #screen width
+hs = root.winfo_screenheight() #screen height
+
+
+x = (ws/2) - (w/2)
+y = 0
+
+root.geometry(f'{w}x{h}+{x:.0f}+{y:.0f}')
 
 ################ Menu Bar ################
 menu_bar = Menu(root)
@@ -45,12 +57,12 @@ def Save(event=None):
     quantity = v_quantity.get()
     # price = int(price)
     # quantity = int(quantity)
-    
-    if quantity == '':
-        quantity = 1
-    elif expense == '' or price == '':
+    if expense == '' or price == '':
         messagebox.showwarning("Error", "กรุณากรอกข้อมูลให้ครบ (รายการและราคาต่อชิ้น)")
         return
+    elif quantity == '':
+        quantity = 1
+    
     try :
         dt_d = datetime.now().strftime("%m-%d-%Y")
         dt_t = datetime.now().strftime("%H:%M:%S")
@@ -214,9 +226,8 @@ def DeleteRecord(event=None):
 
 #-------------------------------------------------#
 
-################ press Enter to Save ###############
-root.bind("<Return>",Save)
-root.bind("<Delete>",DeleteRecord)
+
+
 
 # Built Tab
 tab = ttk.Notebook(root)
@@ -277,6 +288,8 @@ l3_1.pack()
 
 B1 = ttk.Button(f1, text=f"{'Save': >15}", image=icon_b1, compound="left", command=Save)
 B1.pack(ipadx=30, ipady=20, pady=10)
+################ press Enter to Save ###############
+root.bind("<Return>",Save) #List of All Tkinter Event
 #-----------------------------------------------------------
 
 # Page 2 ---------------------------------------------------
@@ -316,9 +329,103 @@ update_table()
 
 # for e in (read_csv()[::-1]): #enumerate 
 #     ex_tv.insert('', END, values=e)
+######### Right Click Menu ################
 
+    
+
+
+def EditRecord():
+    POPUP = Toplevel() # Familiar TK()
+    POPUP.title("EDIT")
+    # POPUP.geometry("400x500+450+0")
+    w = 400
+    h = 450
+
+    ws = root.winfo_screenwidth() #screen width
+    hs = root.winfo_screenheight() #screen height
+
+
+    x = (ws/2) - (w/2)
+    y = (hs/2) - (h/2)
+
+    POPUP.geometry(f'{w}x{h}+{x:.0f}+{y:.0f}')
+    p1 = Frame(POPUP)
+    p1.pack()
+
+    select_ex = ex_tv.selection()
+    data = ex_tv.item(select_ex)
+    data = data['values']
+    transationID = data[2]
+
+    l1 = ttk.Label(p1, text="รายการค่าใช้จ่าย", font=(None, 20))
+    l1.pack(pady=8)
+    p_v_expense = StringVar()
+    
+    E1 = ttk.Entry(p1, textvariable=p_v_expense, font=(None, 16))
+    E1.pack(pady=8)
+
+    l2 = ttk.Label(p1, text="ราคาต่อชิ้น(บาท)", font=(None, 20))
+    l2.pack(pady=8)
+    p_v_price = StringVar()
+    
+    E2 = ttk.Entry(p1, textvariable=p_v_price, font=(None, 16))
+    E2.pack(pady=8)
+
+    l3 = ttk.Label(p1, text="จำนวน(ชิ้น)", font=(None, 20))
+    l3.pack(pady=8)
+    p_v_quantity = StringVar()
+    
+    E3 = ttk.Entry(p1, textvariable=p_v_quantity, font=(None, 16))
+    E3.pack(pady=8) # 
+    l3_1 = ttk.Label(p1, text=" <Default = 1>", font=(None, 8))
+    l3_1.pack()
+
+    def SaveEdit(event=None):
+        # print(transationID)
+        # print(alltransaction[str(transationID)])
+        b_e = alltransaction[str(transationID)] #before_edit_ex
+        edit1 = p_v_expense.get()
+        edit2 = int(p_v_price.get())
+        edit3 = int(p_v_quantity.get())
+        edit4 = edit2 * edit3
+        # print(edit_ex)
+        after_edit_ex = [b_e[0], b_e[1], b_e[2], edit1, edit2, edit3, edit4]
+        alltransaction[str(transationID)] = after_edit_ex
+        UpdateCSV()
+        POPUP.destroy() # Close POPUP
+
+    B1 = ttk.Button(p1, text=f"{'Save': >15}", image=icon_b1, compound="left", command=SaveEdit)
+    B1.pack(ipadx=30, ipady=20, pady=10)
+    ################ press Enter to Save ###############
+    E1.bind("<Return>",SaveEdit) #List of All Tkinter Event
+    E2.bind("<Return>",SaveEdit) #List of All Tkinter Event
+    E3.bind("<Return>",SaveEdit) #List of All Tkinter Event
+    # Set Value From Your select
+    p_v_expense.set(data[3])
+    p_v_price.set(data[4])
+    p_v_quantity.set(data[5])
+    POPUP.mainloop()
+
+
+
+rightClick = Menu(root,tearoff=0)
+rightClick.add_command(label="Edit", command=EditRecord)
+rightClick.add_command(label="Delete",command=DeleteRecord)
+def MenuPopup(event):
+    select = ex_tv.selection()
+    if select == ():
+        return # if you dont select ex in treeview This funtion will return suddenly
+    # print(event.x_root, event.y_root) # Click Position
+    rightClick.post(event.x_root, event.y_root)
+
+ex_tv.bind("<Button-3>",MenuPopup)
+
+
+
+###------------------------------------------###
 B_Delete = ttk.Button(T3, text="Delete", command=DeleteRecord)
 B_Delete.place(x=80,y=550)
+ex_tv.bind("<Delete>",DeleteRecord)
 
 # ----------------------------------------------------------
 v_result = StringVar()
